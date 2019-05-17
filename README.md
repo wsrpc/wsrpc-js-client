@@ -67,7 +67,7 @@ RPC.call('test.getJoke', {}).then((result) => {
     // something like 'Cool!', or 'Hmm... try again' if it's not.
     alert(result);
 }, (error) => {
-    alert(e.type + '("' + e.message + '")');
+    alert(error.type + '("' + error.message + '")');
 });
 </script>
 ```
@@ -131,10 +131,10 @@ Closes socket.
 ```js
 var RPC = new WSRPC(url);
 
-var deferred = RPC.onEvent('onconnect')
+var deferred = RPC.onEvent('onconnect');
 deferred.resolve = function() {
-    RPC.disconnect();
-}
+    RPC.destroy();
+};
 
 RPC.connect();
 ```
@@ -165,23 +165,110 @@ console.log(RPC.stateCode());  // Displays 3
 ```
 
 #### WSRPC.addRoute(name, callback)
-Register client route with specified name.
+Register route on the client with specified name, route added later replaces 
+route added earlier with the same name.
+
+Parameter | Type
+----------|------
+name      | string
+callback  | function
+
+Callback would be called with `object` type parameter `data` containing 
+parameters from server. Callback return value would be received by server. 
+
+```js
+var RPC = new WSRPC(url);
+RPC.addRoute('askUser', function(data) {
+    // Data is object, containing parameters from server.
+    // Would display question ask user to enter response and return response 
+    // to the server. 
+    return { response: prompt(data.question) };
+});
+```
 
 #### WSRPC.deleteRoute(name)
 Remove specified client route.
 
+Parameter | Type
+----------|------
+name      | string
+
+```js
+var RPC = new WSRPC(url);
+RPC.addRoute('askUser', function() { return {} });
+RPC.deleteRoute('askUser');
+```
+
 #### WSRPC.call(route, params)
-Call server route.
+Call server function with specified parameters.
+
+Parameter | Type
+----------|------
+route     | string
+params    | object
+
+```js
+var RPC = new WSRPC(url);
+RPC.connect();
+RPC.call('serverRoute', {
+    param1: 'value1', 
+    param2: 'value2'
+}).then((result) => {
+    alert(result);
+}, (error) => {
+    alert(error.type + '("' + error.message + '")');
+});
+```
 
 #### WSRPC.addEventListener(event, callback)
 Add callback for event. Returns eventId, that can be used later to remove 
 event.
 
+Parameter | Type
+----------|------
+event     | string
+callback  | function
+
+```js
+var RPC = new WSRPC(url);
+RPC.addEventListener('onconnect', function() {
+    console.log('Connected to the server!');
+});
+```
+
 #### WSRPC.removeEventListener(event, eventId)
 Remove event listener using eventId (returned by `addEventListener`).
 
+Parameter | Type
+----------|------
+event     | string
+eventId   | integer
+
+```js
+var RPC = new WSRPC(url);
+var eventId = RPC.addEventListener('onconnect', function() {
+    console.log('Connected to the server!');
+});
+RPC.removeEventListener('onconnect', eventId);
+```
+
 #### WSRPC.onEvent(event)
 Get deferred object, that would execute only once for specified event.
+
+Parameter | Type
+----------|------
+event     | string
+
+```js
+var RPC = new WSRPC(url);
+
+var deferred = RPC.onEvent('onconnect');
+deferred.resolve = function() {
+    RPC.destroy();
+};
+
+RPC.connect();
+```
 
 # Versioning
 
