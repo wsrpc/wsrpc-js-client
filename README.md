@@ -1,7 +1,7 @@
 WSRPC client
 ------------
 
-[![license](https://img.shields.io/pypi/l/wsrpc-aiohttp.svg)](https://pypi.python.org/pypi/wsrpc-aiohttp/)
+[![license](https://img.shields.io/npm/l/wsrpc-python.svg)](https://npmjs.com/package/wsrpc-python)
 
 Easy to use javascript client for
 [wsrpc-aiohttp](https://pypi.org/project/wsrpc-aiohttp/) or
