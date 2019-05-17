@@ -40,7 +40,7 @@ about them (see [jsfiddle](https://jsfiddle.net/3yqmjLbp/)).
 [Backend]((https://github.com/wsrpc/wsrpc-aiohttp/blob/master/docs/source/examples/server.py))
 is located at [demo.wsrpc.info](https://docs.wsrpc.info/).
 
-``` {.HTML}
+```html
 <script type="text/javascript" src="https://unpkg.com/wsrpc-python@4.0.2/dist/wsrpc.min.js"></script>
 <script>
 var RPC = new WSRPC('wss://demo.wsrpc.info/ws/', 5000);
