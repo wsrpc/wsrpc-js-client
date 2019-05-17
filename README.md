@@ -14,6 +14,9 @@ See [online demo](https://demo.wsrpc.info/) and
 * [Installation](#installation)
 * [Usage](#usage)
 * [API](#api)
+  * [Global configuration](#global-configuration)
+  * [Constructor options](#constructor-options)
+  * [Methods](#methods)
 
 # Features
 
