@@ -10,6 +10,11 @@ Easy to use javascript client for
 See [online demo](https://demo.wsrpc.info/) and
 [documentation](https://docs.wsrpc.info/) with examples.
 
+* [Features](#features)
+* [Installation](#installation)
+* [Usage](#usage)
+* [API](#api)
+
 # Features
 
 -   Allows to call server functions from the client side and to
