@@ -38,13 +38,13 @@ Usage
 =====
 
 Let's implement application, that tells jokes by request and collects feedback
-about them (see [jsfiddle](https://jsfiddle.net/pvms5ej1/)).
+about them (see [jsfiddle](https://jsfiddle.net/3yqmjLbp/)).
 
 [Backend]((https://github.com/wsrpc/wsrpc-aiohttp/blob/master/docs/source/examples/server.py))
 is located at [demo.wsrpc.info](https://docs.wsrpc.info/).
 
 ``` {.HTML}
-<script type="text/javascript" src="https://demo.wsrpc.info/js/wsrpc.js"></script>
+<script type="text/javascript" src="https://unpkg.com/wsrpc-python@4.0.2/dist/wsrpc.min.js"></script>
 <script>
 var RPC = new WSRPC('wss://demo.wsrpc.info/ws/', 5000);
 
