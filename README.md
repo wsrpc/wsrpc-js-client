@@ -1,26 +1,11 @@
----
-WSRPC aiohttp
----
-
--   [Features](#features)
--   [Installation](#installation)
--   [Usage](#usage)
--   [Versioning](#versioning)
-
-[![Drone CI](https://cloud.drone.io/api/badges/wsrpc/wsrpc-aiohttp/status.svg)](https://cloud.drone.io/wsrpc/wsrpc-aiohttp)
-
-[![Coveralls](https://coveralls.io/repos/github/wsrpc/wsrpc-aiohttp/badge.svg?branch=master)](https://coveralls.io/github/wsrpc/wsrpc-aiohttp?branch=master)
-
-[![Latest Version](https://img.shields.io/pypi/v/wsrpc-aiohttp.svg)](https://pypi.python.org/pypi/wsrpc-aiohttp/)
-
-[![python wheel](https://img.shields.io/pypi/wheel/wsrpc-aiohttp.svg)](https://pypi.python.org/pypi/wsrpc-aiohttp/)
-
-[![Python Versions](https://img.shields.io/pypi/pyversions/wsrpc-aiohttp.svg)](https://pypi.python.org/pypi/wsrpc-aiohttp/)
+WSRPC client
+------------
 
 [![license](https://img.shields.io/pypi/l/wsrpc-aiohttp.svg)](https://pypi.python.org/pypi/wsrpc-aiohttp/)
 
-Easy to use minimal WebSocket Remote Procedure Call library for aiohttp
-servers.
+Easy to use javascript client for
+[wsrpc-aiohttp](https://pypi.org/project/wsrpc-aiohttp/) or
+[wsrpc-tornado](https://pypi.org/project/wsrpc-tornado/) websocket servers.
 
 See [online demo](https://demo.wsrpc.info/) and
 [documentation](https://docs.wsrpc.info/) with examples.
@@ -28,126 +13,65 @@ See [online demo](https://demo.wsrpc.info/) and
 Features
 ========
 
--   Call server functions from the client side;
--   Call client functions from the server (for example to notify clients
-    about events);
+-   Allows to call server functions from the client side and to
+    call client functions from the server side (e.g. to notify clients about
+    events);
 -   Async connection protocol: both server or client are able to call
-    several functions and get responses as soon as each response would
-    be ready in any order.
--   Fully async server-side functions;
--   Transfer any exceptions from a client side to the server side and
+    multiple functions and get responses as soon as each response would be
+    ready in any order;
+-   Transfers any exceptions from a client side to the server side and
     vise versa;
--   Ready-to-use frontend-library without dependencies;
--   Thread-based websocket handler for writing fully-synchronous backend
-    code (for synchronous database drivers etc.)
--   Protected server-side methods (cliens are not able to call methods,
-    starting with underline directly);
+-   No dependencies;
+-   Messaging is based on [JsonRPC](https://www.jsonrpc.org) protocol;
+-   Provides typescript interface, ES6 module and
+    [UMD](https://github.com/umdjs/umd) distribution as well.
+-   Ability to implement very complex scenarios.
 
 Installation
 ============
 
-Install via pip:
+Install via npm:
 
-    pip install wsrpc-aiohttp
-
-You may want to install *optional*
-[ujson](https://pypi.python.org/pypi/ujson) library to speedup message
-serialization/deserialization:
-
-    pip install ujson
-
-Python module provides client js library out of the box. But for pure
-javascript applications you can install [standalone js client
-library](https://www.npmjs.com/package/wsrpc-python) using npm:
-
-    npm install wsrpc-python
+    npm install wsrpc-js-client
 
 Usage
 =====
 
-Backend code:
+Let's implement application, that tells jokes by request and collects feedback
+about them (see [jsfiddle](https://jsfiddle.net/pvms5ej1/)).
 
-``` {.python}
-import logging
-from time import time
-
-import aiohttp.web
-from wsrpc_aiohttp import WebSocketAsync, STATIC_DIR, WebSocketRoute
-
-
-log = logging.getLogger(__name__)
-
-
-# This class can be called by client.
-# Connection object will have this class instance after calling route-alias.
-class TestRoute(WebSocketRoute):
-    # This method will be executed when client calls route-alias
-    # for the first time.
-    def init(self, **kwargs):
-        # Python __init__ must be return "self".
-        # This method might return anything.
-        return kwargs
-
-    # This method named by camelCase because the client can call it.
-    async def getEpoch(self):
-
-        # You can execute functions on the client side
-        await self.do_notify()
-
-        return time()
-
-    # This method calls function on the client side
-    async def do_notify(self):
-        awesome = 'Somebody executed test1.getEpoch method!'
-        await self.socket.call('notify', result=awesome)
-
-
-app = aiohttp.web.Application()
-app.router.add_route("*", "/ws/", WebSocketAsync)  # Websocket route
-app.router.add_static('/js', STATIC_DIR)  # WSRPC js library
-app.router.add_static('/', ".")  # Your static files
-
-# Stateful request
-# This is the route alias TestRoute as "test1"
-WebSocketAsync.add_route('test1', TestRoute)
-
-# Stateless request
-WebSocketAsync.add_route('test2', lambda *a, **kw: True)
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    aiohttp.web.run_app(app, port=8000)
-```
-
-Frontend code:
+[Backend]((https://github.com/wsrpc/wsrpc-aiohttp/blob/master/docs/source/examples/server.py))
+is located at [demo.wsrpc.info](https://docs.wsrpc.info/).
 
 ``` {.HTML}
-<script type="text/javascript" src="/js/wsrpc.min.js"></script>
+<script type="text/javascript" src="https://demo.wsrpc.info/js/wsrpc.js"></script>
 <script>
-    var url = (window.location.protocol==="https):"?"wss://":"ws://") + window.location.host + '/ws/';
-    RPC = new WSRPC(url, 8000);
+var RPC = new WSRPC('wss://demo.wsrpc.info/ws/', 5000);
 
-    // Configure client API, that can be called from server
-    RPC.addRoute('notify', function (data) {
-        console.log('Server called client route "notify":', data);
-        return data.result;
-    });
-    RPC.connect();
+// Register client route, that can be called by server.
+// It would be called by server, when server sends a joke.
+RPC.addRoute('joke', function (data) {
 
-    // Call stateful route
-    // After you call that route, server would execute 'notify' route on the
-    // client, that is registered above.
-    RPC.call('test1.getEpoch').then(function (data) {
-        console.log('Result for calling server route "test1.getEpoch": ', data);
-    }, function (error) {
-        alert(error);
-    });
+    // After server sends a joke server waits for an answer, if joke is
+    // funny. test.getJoke call is going to be finished only after user
+    // sends response.
+    return confirm(data.joke + '\n\nThat was funny?');
+});
+RPC.connect();
 
-    // Call stateless method
-    RPC.call('test2').then(function (data) {
-        console.log('Result for calling server route "test2"', data);
-    });
+// Request server to tell a joke by calling test.getJoke
+// Server would call client route 'joke' (registered above) and wait for
+// client answer (if joke is funny or not).
+RPC.call('test.getJoke', {}).then((result) => {
+
+    // Here you would finally see server reaction on your feedback about
+    // joke.
+    // If 'joke' client route responds that joke is funny - you would see
+    // something like 'Cool!', or 'Hmm... try again' if it's not.
+    alert(result);
+}, (error) => {
+    alert(e.type + '("' + e.message + '")');
+});
 </script>
 ```
 
