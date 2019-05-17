@@ -208,7 +208,8 @@ RPC.deleteRoute('askUser');
 ```
 
 #### WSRPC.call(route, params)
-Call server function with specified parameters.
+Call server function with specified parameters, returns `Promise` that can be
+awaited using await syntax.
 
 Parameter | Type
 ----------|------
@@ -229,8 +230,8 @@ RPC.call('serverRoute', {
 ```
 
 #### WSRPC.addEventListener(event, callback)
-Add callback for event. Returns eventId, that can be used later to remove 
-event.
+Add permanent callback for event (see `onEvent` to register one time event).
+Returns eventId, that can be used later to remove event.
 
 Parameter | Type
 ----------|------
@@ -262,6 +263,7 @@ RPC.removeEventListener('onconnect', eventId);
 
 #### WSRPC.onEvent(event)
 Get deferred object, that would execute only once for specified event.
+deferred.promise is a native `Promise` and can be awaited using await syntax.
 
 Parameter | Type
 ----------|------
