@@ -38,7 +38,7 @@ See [online demo](https://demo.wsrpc.info/) and
 
 Install via npm:
 
-    npm install wsrpc-js-client
+    npm install @wsrpc/client
 
 # Usage
 
