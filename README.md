@@ -43,13 +43,13 @@ Install via npm:
 # Usage
 
 Let's implement application, that tells jokes by request and collects feedback
-about them (see [jsfiddle](https://jsfiddle.net/3yqmjLbp/)).
+about them (see [jsfiddle](https://jsfiddle.net/ke3z4bph/)).
 
 [Backend]((https://github.com/wsrpc/wsrpc-aiohttp/blob/master/docs/source/examples/server.py))
 is located at [demo.wsrpc.info](https://docs.wsrpc.info/).
 
 ```html
-<script type="text/javascript" src="https://unpkg.com/wsrpc-python@4.0.2/dist/wsrpc.min.js"></script>
+<script type="text/javascript" src="//unpkg.com/@wsrpc/client"></script>
 <script>
 var RPC = new WSRPC('wss://demo.wsrpc.info/ws/', 5000);
 
