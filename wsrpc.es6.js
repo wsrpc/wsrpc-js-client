@@ -200,7 +200,7 @@ class WSRPC {
 				callEvents('onchange', ev);
 			};
 
-			function handleCall(self, data) {
+			function handleMethod(self, data) {
 				if (!self.routes.hasOwnProperty(data.method))
 					throw new Error('Route not found');
 
@@ -287,7 +287,7 @@ class WSRPC {
 					data = JSON.parse(message.data);
 					log(data);
 					if (data.hasOwnProperty('method')) {
-						return handleCall(self, data);
+						return handleMethod(self, data);
 					} else if (data.hasOwnProperty('error') && data.error === null) {
 						return handleError(self, data);
 					} else {
