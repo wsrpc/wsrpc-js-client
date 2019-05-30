@@ -354,9 +354,7 @@ class WSRPC {
 			return deferred.promise;
 		}
 
-		self.socketEventsListeners = [function (event) {
-			console.log(event);
-		}];
+		self.socketEventsListeners = [function (event) {console.log(event);}];
 		self.asyncRoutes = {};
 		self.routes = {};
 		self.store = {};
@@ -406,11 +404,10 @@ class WSRPC {
 				self.socket = createSocket();
 			},
 			addServerEventListener: function (callable) {
-				return self.socketEventsListeners.push(callable);
+				return self.socketEventsListeners.push(callable) - 1;
 			},
 			removeServerEventListener: function (index) {
-				delete self.socketEventsListeners[index];
-				return index;
+			    return self.socketEventsListeners.splice(index, 1).length;
 			}
 		});
 

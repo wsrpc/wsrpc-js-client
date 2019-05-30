@@ -56,7 +56,7 @@ export namespace NWsRPC {
             addServerEventListener(
                 func: (this: WSRPCPublic, event: object) => any
             ): number;
-            removeServerEventListener(index: number): boolean;
+            removeServerEventListener(index: number): number;
         }
 
         export interface WSRPC {
