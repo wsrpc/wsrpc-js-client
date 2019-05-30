@@ -275,7 +275,21 @@
           data = JSON.parse(message.data);
           log(data);
 
-          if (data.hasOwnProperty('method')) {
+          if (!data.hasOwnProperty('id')) {
+            var current;
+            console.group("Event received");
+
+            for (var i = 0; i < self.socketEventsListeners.length; i++) {
+              try {
+                current = self.socketEventsListeners[i];
+                current.apply(self.public, [data]);
+              } catch (e) {
+                console.error(e);
+              }
+            }
+
+            console.groupEnd();
+          } else if (data.hasOwnProperty('method')) {
             return handleCall(self, data);
           } else if (data.hasOwnProperty('error') && data.error === null) {
             return handleError(self, data);
@@ -327,6 +341,9 @@
       return deferred.promise;
     }
 
+    self.socketEventsListeners = [function (event) {
+      console.log(event);
+    }];
     self.asyncRoutes = {};
     self.routes = {};
     self.store = {};
@@ -373,6 +390,13 @@
       connect: function connect() {
         self.socketStarted = true;
         self.socket = createSocket();
+      },
+      addServerEventListener: function addServerEventListener(callable) {
+        return self.socketEventsListeners.push(callable);
+      },
+      removeServerEventListener: function removeServerEventListener(index) {
+        delete self.socketEventsListeners[index];
+        return index;
       }
     });
     self.public.addRoute('log', function (argsObj) {
