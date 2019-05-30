@@ -21,6 +21,14 @@ export namespace NWsRPC {
             onchange = 'onchange',
         }
 
+
+        export interface Deferred {
+            resolve(result: any): any;
+            reject(error: any): any;
+            done: boolean;
+            promise: Promise<any>;
+        }
+
         export type eventId = number;
         export type Route = string;
 
@@ -29,6 +37,7 @@ export namespace NWsRPC {
         }
 
         export interface WSRPCPublic {
+            defer(): Deferred;
             connect(): void;
             destroy(): void;
 

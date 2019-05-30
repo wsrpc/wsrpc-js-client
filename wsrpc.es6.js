@@ -40,7 +40,7 @@ function log() {
 function trace (msg) {
 	if (!WSRPC.TRACE) return;
 
-	var payload = msg;
+	let payload = msg;
 	if ('data' in msg) payload = JSON.parse(msg.data);
 	logGroup("WSRPC.TRACE", 'trace', [payload]);
 }
@@ -67,7 +67,7 @@ const readyState = Object.freeze({
 
 class WSRPC {
 	constructor (URL, reconnectTimeout = 1000) {
-		var self = this;
+		let self = this;
 
 		URL = getAbsoluteWsUrl(URL);
 
@@ -91,15 +91,15 @@ class WSRPC {
 		self.callQueue = [];
 
 		function createSocket() {
-			var ws = new WebSocket(URL);
+			let ws = new WebSocket(URL);
 
-			var rejectQueue = function () {
+			let rejectQueue = function () {
 				self.connectionNumber++; // rejects incoming calls
-				var deferred;
+				let deferred;
 
 				//reject all pending calls
 				while (0 < self.callQueue.length) {
-					var callObj = self.callQueue.shift();
+					let callObj = self.callQueue.shift();
 					deferred = self.store[callObj.id];
 					delete self.store[callObj.id];
 
@@ -109,7 +109,7 @@ class WSRPC {
 				}
 
 				// reject all from the store
-				for (var key in self.store) {
+				for (let key in self.store) {
 					if (!self.store.hasOwnProperty(key)) continue;
 
 					deferred = self.store[key];
@@ -136,7 +136,7 @@ class WSRPC {
 				log('ONCLOSE CALLED', 'STATE', self.public.state());
 				trace(err);
 
-				for (var serial in self.store) {
+				for (let serial in self.store) {
 					if (!self.store.hasOwnProperty(serial)) continue;
 					if (self.store[serial].hasOwnProperty('reject')) {
 						self.store[serial].reject('Connection closed');
@@ -175,14 +175,14 @@ class WSRPC {
 
 			function callEvents(evName, event) {
 				while (0 < self.oneTimeEventStore[evName].length) {
-					var deferred = self.oneTimeEventStore[evName].shift();
+					let deferred = self.oneTimeEventStore[evName].shift();
 					if (deferred.hasOwnProperty('resolve') &&
 						deferred.promise.isPending()) deferred.resolve();
 				}
 
-				for (var i in self.eventStore[evName]) {
+				for (let i in self.eventStore[evName]) {
 					if (!self.eventStore[evName].hasOwnProperty(i)) continue;
-					var cur = self.eventStore[evName][i];
+					let cur = self.eventStore[evName][i];
 					tryCallEvent(cur, event);
 				}
 			}
@@ -204,8 +204,8 @@ class WSRPC {
 				if (!self.routes.hasOwnProperty(data.method))
 					throw new Error('Route not found');
 
-				var connectionNumber = self.connectionNumber;
-				var deferred = new Deferred();
+				let connectionNumber = self.connectionNumber;
+				let deferred = new Deferred();
 
 				deferred.promise.then(
 					function (result) {
@@ -224,7 +224,7 @@ class WSRPC {
 					}
 				);
 
-				var func = self.routes[data.method];
+				let func = self.routes[data.method];
 
 				if (self.asyncRoutes[data.method])
 					return func.apply(deferred, [data.params]);
@@ -235,7 +235,7 @@ class WSRPC {
 					);
 				}
 
-				var promiseMock = {
+				let promiseMock = {
 					resolve: badPromise,
 					reject: badPromise,
 				};
@@ -252,7 +252,7 @@ class WSRPC {
 				if (!self.store.hasOwnProperty(data.id))
 					return log('Unknown callback');
 
-				var deferred = self.store[data.id];
+				let deferred = self.store[data.id];
 
 				if (typeof deferred === 'undefined')
 					return log('Confirmation without handler');
@@ -263,7 +263,7 @@ class WSRPC {
 			}
 
 			function handleResult(self, data) {
-				var deferred = self.store[data.id];
+				let deferred = self.store[data.id];
 				if (typeof deferred === 'undefined')
 					return log('Confirmation without handler');
 
@@ -281,17 +281,17 @@ class WSRPC {
 
 				if (message.type !== 'message') return;
 
-				var data;
+				let data;
 
 				try {
 					data = JSON.parse(message.data);
 					log(data);
 
 					if (!data.hasOwnProperty('id')) {
-						var current;
+						let current;
 
 						console.group("Event received");
-						for (var i = 0; i < self.socketEventsListeners.length; i++) {
+						for (let i = 0; i < self.socketEventsListeners.length; i++) {
 							try {
 								current = self.socketEventsListeners[i];
 								current.apply(self.public, [data]);
@@ -308,7 +308,7 @@ class WSRPC {
 						return handleResult(self, data);
 					}
 				} catch (exception) {
-					var err = {
+					let err = {
 						error: exception.message,
 						result: null,
 						id: data ? data.id : null
@@ -324,15 +324,15 @@ class WSRPC {
 
 		function makeCall(func, args, params) {
 			self.id += 2;
-			var deferred = new Deferred();
+			let deferred = new Deferred();
 
-			var callObj = Object.freeze({
+			let callObj = Object.freeze({
 				id: self.id,
 				method: func,
 				params: args
 			});
 
-			var state = self.public.state();
+			let state = self.public.state();
 
 			if (state === 'OPEN') {
 				self.store[self.id] = deferred;
@@ -359,6 +359,9 @@ class WSRPC {
 		self.routes = {};
 		self.store = {};
 		self.public = Object.freeze({
+            defer: function () {
+                return new Deferred();
+            },
 			call: function (func, args, params) {
 				return makeCall(func, args, params);
 			},
@@ -371,7 +374,7 @@ class WSRPC {
 				return delete self.routes[route];
 			},
 			addEventListener: function (event, func) {
-				var eventId = self.eventId++;
+				let eventId = self.eventId++;
 				self.eventStore[event][eventId] = func;
 				return eventId;
 			},
@@ -384,7 +387,7 @@ class WSRPC {
 				}
 			},
 			onEvent: function (event) {
-				var deferred = new Deferred();
+				let deferred = new Deferred();
 				self.oneTimeEventStore[event].push(deferred);
 				return deferred.promise;
 			},
@@ -408,7 +411,7 @@ class WSRPC {
 			},
 			removeServerEventListener: function (index) {
 			    return self.socketEventsListeners.splice(index, 1).length;
-			}
+			},
 		});
 
 		self.public.addRoute('log', function (argsObj) {

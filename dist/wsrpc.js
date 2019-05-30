@@ -348,6 +348,9 @@
     self.routes = {};
     self.store = {};
     self.public = Object.freeze({
+      defer: function defer() {
+        return new Deferred();
+      },
       call: function call(func, args, params) {
         return makeCall(func, args, params);
       },
@@ -392,11 +395,10 @@
         self.socket = createSocket();
       },
       addServerEventListener: function addServerEventListener(callable) {
-        return self.socketEventsListeners.push(callable);
+        return self.socketEventsListeners.push(callable) - 1;
       },
       removeServerEventListener: function removeServerEventListener(index) {
-        delete self.socketEventsListeners[index];
-        return index;
+        return self.socketEventsListeners.splice(index, 1).length;
       }
     });
     self.public.addRoute('log', function (argsObj) {
