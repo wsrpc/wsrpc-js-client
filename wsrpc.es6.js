@@ -288,19 +288,19 @@ class WSRPC {
 					log(data);
 
 					if (!data.hasOwnProperty('id')) {
-                        var current;
+						var current;
 
-                        console.group("Event received");
-                        for (var i = 0; i < self.socketEventsListeners.length; i++) {
-                            try {
-                                current = self.socketEventsListeners[i];
-                                current.apply(self.public, [data]);
-                            } catch (e) {
-                                console.error(e);
-                            }
-                        }
-                        console.groupEnd();
-                    } else if (data.hasOwnProperty('method')) {
+						console.group("Event received");
+						for (var i = 0; i < self.socketEventsListeners.length; i++) {
+							try {
+								current = self.socketEventsListeners[i];
+								current.apply(self.public, [data]);
+							} catch (e) {
+								console.error(e);
+							}
+						}
+						console.groupEnd();
+					} else if (data.hasOwnProperty('method')) {
 						return handleCall(self, data);
 					} else if (data.hasOwnProperty('error') && data.error === null) {
 						return handleError(self, data);
@@ -355,8 +355,8 @@ class WSRPC {
 		}
 
 		self.socketEventsListeners = [function (event) {
-            console.log(event);
-        }];
+			console.log(event);
+		}];
 		self.asyncRoutes = {};
 		self.routes = {};
 		self.store = {};
@@ -405,13 +405,13 @@ class WSRPC {
 				self.socketStarted = true;
 				self.socket = createSocket();
 			},
-            addServerEventListener: function (callable) {
-                return self.socketEventsListeners.push(callable);
-            },
-            removeServerEventListener: function (index) {
-                delete self.socketEventsListeners[index];
-                return index;
-            }
+			addServerEventListener: function (callable) {
+				return self.socketEventsListeners.push(callable);
+			},
+			removeServerEventListener: function (index) {
+				delete self.socketEventsListeners[index];
+				return index;
+			}
 		});
 
 		self.public.addRoute('log', function (argsObj) {
