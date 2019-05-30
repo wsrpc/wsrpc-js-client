@@ -1,6 +1,7 @@
 import babel from 'rollup-plugin-babel';
 
 
+// noinspection JSUnusedGlobalSymbols
 export default [
 	Object.freeze({
 		input: 'wsrpc.es6.js',

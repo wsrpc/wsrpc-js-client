@@ -1,6 +1,5 @@
 export namespace NWsRPC {
     export module Main {
-
         export enum States {
             CONNECTING = 'CONNECTING',
             OPEN = 'OPEN',
@@ -54,6 +53,10 @@ export namespace NWsRPC {
             deleteRoute(name: Route): void;
 
             call(func: Route, args: Array<any>, params: Object): Promise<any>;
+            addServerEventListener(
+                func: (this: WSRPCPublic, event: object) => any
+            ): number;
+            removeServerEventListener(index: number): number;
         }
 
         export interface WSRPC {
