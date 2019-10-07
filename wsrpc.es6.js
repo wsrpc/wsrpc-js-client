@@ -8,7 +8,10 @@ class Deferred {
 
 		function wrapper(func) {
 			return function () {
-				if (self.done) throw new Error('Promise already done');
+				if (self.done) {
+					console.error(new Error('Promise already done'));
+					return;
+				}
 				self.done = true;
 				return func.apply(this, arguments);
 			}
