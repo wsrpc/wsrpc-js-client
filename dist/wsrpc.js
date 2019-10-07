@@ -21,9 +21,10 @@
     function wrapper(func) {
       return function () {
         if (self.done) {
-            console.error(new Error('Promise already done'));
-            return;
+          console.error(new Error('Promise already done'));
+          return;
         }
+
         self.done = true;
         return func.apply(this, arguments);
       };
