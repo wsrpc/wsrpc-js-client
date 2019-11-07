@@ -415,6 +415,9 @@ class WSRPC {
 			removeServerEventListener: function (index) {
 			    return self.socketEventsListeners.splice(index, 1).length;
 			},
+            sendRaw: function (data) {
+                return self.socket.send(data);
+            }
 		});
 
 		self.public.addRoute('log', function (argsObj) {

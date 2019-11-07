@@ -66,6 +66,7 @@ export namespace NWsRPC {
                 func: (this: WSRPCPublic, event: object) => any
             ): number;
             removeServerEventListener(index: number): number;
+            sendRaw(data: any): any;
         }
 
         export interface WSRPC {

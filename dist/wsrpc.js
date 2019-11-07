@@ -403,6 +403,9 @@
       },
       removeServerEventListener: function removeServerEventListener(index) {
         return self.socketEventsListeners.splice(index, 1).length;
+      },
+      sendRaw: function sendRaw(data) {
+        return self.socket.send(data);
       }
     });
     self.public.addRoute('log', function (argsObj) {
