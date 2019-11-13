@@ -215,14 +215,14 @@ class WSRPC {
 						if (connectionNumber !== self.connectionNumber) return;
 						self.socket.send(JSON.stringify({
 							id: data.id,
-							result: result
+							result: result || null
 						}));
 					},
 					function (error) {
 						if (connectionNumber !== self.connectionNumber) return;
 						self.socket.send(JSON.stringify({
 							id: data.id,
-							error: error
+							error: error || null
 						}));
 					}
 				);
