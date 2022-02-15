@@ -1,6 +1,6 @@
 {
   "name": "@wsrpc/client",
-  "version": "4.3.1",
+  "version": "4.4.0",
   "description": "WebSocket based JSONRPC client",
   "main": "dist/wsrpc.min.js",
   "module": "wsrpc.es6.js",

@@ -10,6 +10,26 @@
     }
   }
 
+  function _toConsumableArray(arr) {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  }
+
+  function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+      return arr2;
+    }
+  }
+
+  function _iterableToArray(iter) {
+    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  }
+
+  function _nonIterableSpread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance");
+  }
+
   var Deferred = function Deferred() {
     _classCallCheck(this, Deferred);
 
@@ -68,6 +88,22 @@
     var host = window.location.host;
     var path = url.replace(/^\/+/gm, '');
     return "".concat(scheme, "//").concat(host).concat(port, "/").concat(path);
+  }
+
+  function buildProxyMethodHandler(property) {
+    return {
+      get: function get(handler, childProperty) {
+        if (childProperty in handler) {
+          return handler[childProperty];
+        }
+
+        var newProperty = property ? "".concat(property, ".").concat(childProperty) : childProperty;
+        return new Proxy(handler, buildProxyMethodHandler(newProperty));
+      },
+      apply: function apply(target, thisArg, args) {
+        return target.apply(void 0, [property].concat(_toConsumableArray(args)));
+      }
+    };
   }
 
   var readyState = Object.freeze({
@@ -358,6 +394,7 @@
       call: function call(func, args, params) {
         return makeCall(func, args, params);
       },
+      proxy: new Proxy(makeCall, buildProxyMethodHandler()),
       addRoute: function addRoute(route, callback, isAsync) {
         self.asyncRoutes[route] = isAsync || false;
         self.routes[route] = callback;
