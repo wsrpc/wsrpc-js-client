@@ -31,6 +31,10 @@ export namespace NWsRPC {
 
         export type eventId = number;
         export type Route = string;
+        export interface CallInterface {
+            (func: Route, args: Array<any>, params: Object): Promise<any>
+        }
+        export interface ProxyInterface extends Record<string, CallInterface | ProxyInterface> {}
 
         export interface onEventResult {
             (event: Event): any;
@@ -61,7 +65,8 @@ export namespace NWsRPC {
             ): void;
             deleteRoute(name: Route): void;
 
-            call(func: Route, args: Array<any>, params: Object): Promise<any>;
+            call: CallInterface;
+            proxy: ProxyInterface;
             addServerEventListener(
                 func: (this: WSRPCPublic, event: object) => any
             ): number;

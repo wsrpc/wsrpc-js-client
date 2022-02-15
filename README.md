@@ -280,6 +280,72 @@ deferred.resolve = function() {
 RPC.connect();
 ```
 
+#### WSRPC.proxy
+Proxy for `WSRPC.call` method to call the remote functions by dot notation.
+
+Parameter | Type
+----------|------
+params    | object
+
+```js
+var RPC = new WSRPC(url);
+RPC.connect();
+RPC.proxy.serverRoute({
+    param1: 'value1', 
+    param2: 'value2'
+}).then((result) => {
+    alert(result);
+}, (error) => {
+    alert(error.type + '("' + error.message + '")');
+});
+```
+### Proxy Routes
+#### Function based Proxy example:
+Python server code:
+```python
+from wsrpc_aiohttp import WebSocketAsync
+
+async def subtract(socket: WebSocketAsync, *, a, b):
+    return a - b
+
+WebSocketAsync.add_route('subtract', subtract)
+```
+Javascript client code:
+```js
+var RPC = new WSRPC(url);
+RPC.connect();
+await RPC.proxy.subtract({a: 1, b: 9});
+```
+
+#### Class based Proxy example:
+Python server code:
+```python
+from wsrpc_aiohttp import decorators, WebSocketAsync
+
+class Storage(Route):
+    async def init(self):
+        self._internal = dict()
+
+    @decorators.proxy
+    async def get(self, key, default=None):
+        return self._internal.get(key, default)
+
+    @decorators.proxy
+    async def set(self, key, value):
+        self._internal[key] = value
+        return True
+
+WebSocketAsync.add_route('kv', Storage)
+```
+
+Javascript client code:
+```js
+var RPC = new WSRPC(url);
+RPC.connect();
+await RPC.proxy.kv.set({ key: 'foo', value: 'bar' });
+await RPC.proxy.kv.get({ key: 'foo' });
+```
+
 # Versioning
 
 This software follows [Semantic Versioning](http://semver.org/)
