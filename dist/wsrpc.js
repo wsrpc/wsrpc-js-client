@@ -93,7 +93,7 @@
   function buildProxyMethodHandler(property) {
     return {
       get: function get(handler, childProperty) {
-        if (childProperty in handler) {
+        if (childProperty.startsWith('_')) {
           return handler[childProperty];
         }
 
