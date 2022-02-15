@@ -64,7 +64,7 @@ function getAbsoluteWsUrl(url) {
 function buildProxyMethodHandler(property){
   return {
     get: (handler, childProperty) => {
-      if (childProperty in handler) {
+      if (childProperty.startsWith('_')) {
         return handler[childProperty];
       }
       const newProperty = property ? `${property}.${childProperty}` : childProperty;
