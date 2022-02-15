@@ -300,7 +300,7 @@ RPC.proxy.serverRoute({
 });
 ```
 
-Class based Proxy example:
+#### Class based Proxy example:
 ```python
 from wsrpc_aiohttp import decorators, WebSocketAsync
 
@@ -327,7 +327,7 @@ await RPC.proxy.kv.set({ key: 'foo', value: 'bar' });
 await RPC.proxy.kv.get({ key: 'foo' });
 ```
 
-Function based Proxy example:
+#### Function based Proxy example:
 ```python
 from wsrpc_aiohttp import WebSocketAsync
 
