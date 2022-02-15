@@ -6,7 +6,7 @@ export default [
 	Object.freeze({
 		input: 'wsrpc.es6.js',
 		output: {
-			file: 'dist/wsrpc.js',
+			file: 'wsrpc.js',
 			name: 'WSRPC',
 			format: 'umd',
 			sourcemap: true
