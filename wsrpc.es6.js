@@ -61,6 +61,24 @@ function getAbsoluteWsUrl(url) {
 	return `${scheme}//${host}${port}/${path}`;
 }
 
+function buildProxyMethodHandler(property){
+  return {
+    get: (handler, childProperty) => {
+      if (childProperty in handler) {
+        return handler[childProperty];
+      }
+      const newProperty = property ? `${property}.${childProperty}` : childProperty;
+      return new Proxy(
+        handler,
+        buildProxyMethodHandler(newProperty),
+      );
+    },
+    apply: function (target, thisArg, args) {
+      return target(property, ...args);
+    },
+  };
+}
+
 const readyState = Object.freeze({
 	0: 'CONNECTING',
 	1: 'OPEN',
@@ -368,6 +386,7 @@ class WSRPC {
 			call: function (func, args, params) {
 				return makeCall(func, args, params);
 			},
+			proxy: new Proxy(makeCall, buildProxyMethodHandler()),
 			addRoute: function (route, callback, isAsync) {
 				self.asyncRoutes[route] = isAsync || false;
 				self.routes[route] = callback;

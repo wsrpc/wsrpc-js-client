@@ -280,6 +280,26 @@ deferred.resolve = function() {
 RPC.connect();
 ```
 
+#### WSRPC.proxy
+Proxy for `WSRPC.call` method to call the remote functions by dot notation.
+
+Parameter | Type
+----------|------
+params    | object
+
+```js
+var RPC = new WSRPC(url);
+RPC.connect();
+RPC.proxy.serverRoute({
+    param1: 'value1', 
+    param2: 'value2'
+}).then((result) => {
+    alert(result);
+}, (error) => {
+    alert(error.type + '("' + error.message + '")');
+});
+```
+
 # Versioning
 
 This software follows [Semantic Versioning](http://semver.org/)
